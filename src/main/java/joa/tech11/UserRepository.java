@@ -5,9 +5,9 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.core.Response;
-import joa.tech11.event.AddUserEvent;
-import joa.tech11.event.DeleteUserEvent;
+import joa.tech11.event.UserEvent;
+import joa.tech11.qualifier.AddEvent;
+import joa.tech11.qualifier.DeleteEvent;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class UserRepository implements PanacheRepository<UserEntity> {
         return listAll();
     }
 
-    public void create(@Observes AddUserEvent userEvent) {
+    public void create(@Observes @AddEvent UserEvent userEvent) {
         UserEntity user = userEvent.getUser();
         user.setPassword(BcryptUtil.bcryptHash(password));
         persist(user);
@@ -42,7 +42,7 @@ public class UserRepository implements PanacheRepository<UserEntity> {
                 }).orElseThrow(() -> new NotFoundException("User not found"));
     }
 
-    public void delete(@Observes DeleteUserEvent userEvent) {
+    public void delete(@Observes @DeleteEvent UserEvent userEvent) {
         delete(userEvent.getUser());
     }
 }
