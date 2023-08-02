@@ -24,7 +24,7 @@ public class UserResource {
     private @DeleteEvent Event<UserEvent> deleteUserEvent;
 
     @Inject
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @GET
     public Response getUsers() {
@@ -51,7 +51,7 @@ public class UserResource {
     public Response addUSer(UserEntity user) {
         try {
             addUserEvent.fire(new AddUserEvent(user));
-           // userRepository.create(user);
+            // userRepository.create(user);
             return Response
                     .status(Response.Status.CREATED)
                     .entity(user)
@@ -67,15 +67,9 @@ public class UserResource {
     @Path("/{id}")
     public Response editUser(@PathParam("id") Long id, UserEntity user) {
         try {
-            return userRepository.findByIdOptional(id)
-                    .map(u -> {
-                        u.setPassword(user.getPassword());
-                        u.setEmail(user.getEmail());
-                        u.setBirthday(user.getBirthday());
-                        u.setFirstName(user.getFirstName());
-                        u.setLastName(user.getLastName());
-                        return Response.ok(u).build();
-                    }).orElse(Response.status(Response.Status.NOT_FOUND).build());
+            return Response.ok(userRepository.update(id, user)).build();
+        } catch (NotFoundException ex) {
+            return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception ex) {
             return Response.status(Response.Status.NOT_MODIFIED).build();
         }
