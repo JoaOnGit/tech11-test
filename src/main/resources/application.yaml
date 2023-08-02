@@ -1,0 +1,12 @@
+quarkus:
+  jackson:
+    fail-on-unknown-properties=true
+  datasource:
+    db-kind: h2
+    jdbc:
+      url: jdbc:h2:mem:db
+  hibernate-orm:
+    database:
+      generation: drop-and-create
+    dialect: org.hibernate.dialect.H2Dialect
+
